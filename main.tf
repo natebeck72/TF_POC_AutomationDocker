@@ -426,7 +426,7 @@ resource "aws_route53_record" "panorama" {
   ttl = "300"
   records = [data.azurerm_public_ip.panoramaip.ip_address]
   depends_on = [
-    azurerm_virtual_machine.ngfw
+    azurerm_virtual_machine.NGFW
   ]
 }
 
@@ -437,7 +437,7 @@ resource "aws_route53_record" "ngfw" {
   ttl = "300"
   records = [data.azurerm_public_ip.firewallip.ip_address]
   depends_on = [
-    azurerm_virtual_machine.ngfw
+    azurerm_virtual_machine.NGFW
   ]
 }
 
