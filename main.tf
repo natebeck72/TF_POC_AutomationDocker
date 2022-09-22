@@ -261,8 +261,8 @@ resource "azurerm_network_interface" "fw-eth1" {
   ip_configuration {
    name = "ipconfig_untrust"
    subnet_id = azurerm_subnet.Untrust.id
-   private_private_ip_address_allocation = "Static"
-   private_private_ip_address = "100.64.1.4"
+   private_ip_address_allocation = "Static"
+   private_ip_address = "100.64.1.4"
    public_ip_address_id = azurerm_public_ip.panormaip.id  
   }
   tags = {
@@ -332,7 +332,7 @@ resource "azurerm_virtual_machine" "NGFW" {
       admin_password = var.admin_password
     }
     primary_network_interface_id = azurerm_network_interface.fw-eth0.id
-    network_inetwork_interface_ids =   [azurerm_network_interface.fw-eth0.id,
+    network_interface_ids =   [azurerm_network_interface.fw-eth0.id,
                                         azurerm_network_interface.fw-eth1.id,
                                         azurerm_network_interface.fw-eth2.id]
     os_profile_linux_config {
