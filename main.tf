@@ -385,3 +385,31 @@ resource "azurerm_virtual_machine" "panorama" {
         no-shut-contact = "${var.SE_Email}"
     }
 }
+
+# Read the Route53 Zone into the dataset
+
+# Read the Public IP's
+
+data "azurerm_public_ip" "panoramaip" {
+    name = azurerm_public_ip.panormaip.name
+    resource_group_name = azurerm_resource_group.rgname.name
+    depends_on = [
+      azurerm_virtual_machine.NGFW
+    ]
+}
+
+data "azurerm_public_ip" "firewallip" {
+    name = azurerm_public_ip.firewallip.name
+    resource_group_name = azurerm_resource_group.rgname.name
+    depends_on = [
+      azurerm_virtual_machine.panorama
+    ]
+}
+
+output "ngfw_public_ip" {
+    value = data.azurerm_public_ip.firewallip.ip_address
+}
+
+output "panorama_public_ip" {
+    value = data.azurerm_public_ip.panoramaip.ip_address
+}
