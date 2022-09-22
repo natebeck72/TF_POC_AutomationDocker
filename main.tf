@@ -22,7 +22,7 @@ resource "azurerm_network_security_group" "nsg" {
         priority = 100
         direction = "Inbound"
         access = "Allow"
-        protocol = "TCP"
+        protocol = "Tcp"
         source_port_range = "*"
         destination_port_range = "443"
         source_address_prefix = "*"
@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "nsg" {
         priority = 101
         direction = "Inbound"
         access = "Allow"
-        protocol = "TCP"
+        protocol = "Tcp"
         source_port_range = "*"
         destination_port_range = "22"
         source_address_prefix = "*"
@@ -46,7 +46,7 @@ resource "azurerm_network_security_group" "nsg" {
         priority = 102
         direction = "Inbound"
         access = "Allow"
-        protocol = "TCP"
+        protocol = "Tcp"
         source_port_range = "*"
         destination_port_range = "*"
         source_address_prefix = "100.64.0.0/22"
@@ -195,21 +195,21 @@ resource "azurerm_virtual_network" "vnet" {
 resource "azurerm_subnet" "Mgmt" {
     name = "Mgmt"
     resource_group_name = azurerm_resource_group.rgname.name
-    Location = azurerm_resource_group.rgname.location
+    virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = ["100.64.0.0/24"]
 }
 
 resource "azurerm_subnet" "Trust" {
     name = "Trust"
     resource_group_name = azurerm_resource_group.rgname.name
-    location = azurerm_resource_group.rgname.location
+    virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = [ "100.64.1.0/24" ]
 }
 
 resource "azurerm_subnet" "Untrust" {
   name = "Untrust"
   resource_group_name = azurerm_resource_group.rgname.name
-  location = azurerm_resource_group.rgname.location
+  virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["100.64.2.0/24"]
 }
 
@@ -329,9 +329,9 @@ resource "azurerm_virtual_machine" "NGFW" {
     os_profile {
       computer_name = lower("${var.customername}-ngfw")
       admin_username = var.admin_username
-      admin_admin_password = var.admin_admin_password
+      admin_password = var.admin_password
     }
-    primary_primary_network_interface_id = azurerm_network_interface.fw-eth0.id
+    primary_network_interface_id = azurerm_network_interface.fw-eth0.id
     network_inetwork_interface_ids =   [azurerm_network_interface.fw-eth0.id,
                                         azurerm_network_interface.fw-eth1.id,
                                         azurerm_network_interface.fw-eth2.id]
