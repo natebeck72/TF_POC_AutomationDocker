@@ -203,14 +203,14 @@ resource "azurerm_subnet" "Trust" {
     name = "Trust"
     resource_group_name = azurerm_resource_group.rgname.name
     virtual_network_name = azurerm_virtual_network.vnet.name
-    address_prefixes = [ "100.64.1.0/24" ]
+    address_prefixes = [ "100.64.2.0/24" ]
 }
 
 resource "azurerm_subnet" "Untrust" {
   name = "Untrust"
   resource_group_name = azurerm_resource_group.rgname.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes = ["100.64.2.0/24"]
+  address_prefixes = ["100.64.1.0/24"]
 }
 
 resource "azurerm_subnet_route_table_association" "Trust" {
