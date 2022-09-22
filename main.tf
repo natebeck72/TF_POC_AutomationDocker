@@ -105,6 +105,11 @@ resource "azurerm_storage_account" "poc" {
     account_tier = "Standard"
     account_replication_type = "LRS"
     public_network_access_enabled = "false"
+    blob_properties {
+      delete_retention_policy {
+        days = 7
+      }
+    }
     queue_properties {
       logging {
         delete = true
@@ -134,6 +139,11 @@ resource "azurerm_storage_account" "blob" {
     account_replication_type = "LRS"
     public_network_access_enabled = "false"
     account_kind = "BlobStorage"
+    blob_properties {
+      delete_retention_policy {
+        days = 7
+      }
+    }
 
     network_rules {
       default_action="Deny"
@@ -199,18 +209,17 @@ resource "azurerm_subnet" "Mgmt" {
     address_prefixes = ["100.64.0.0/24"]
 }
 
-resource "azurerm_subnet" "Trust" {
-    name = "Trust"
-    resource_group_name = azurerm_resource_group.rgname.name
-    virtual_network_name = azurerm_virtual_network.vnet.name
-    address_prefixes = [ "100.64.2.0/24" ]
-}
-
 resource "azurerm_subnet" "Untrust" {
   name = "Untrust"
   resource_group_name = azurerm_resource_group.rgname.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["100.64.1.0/24"]
+}
+resource "azurerm_subnet" "Trust" {
+    name = "Trust"
+    resource_group_name = azurerm_resource_group.rgname.name
+    virtual_network_name = azurerm_virtual_network.vnet.name
+    address_prefixes = [ "100.64.2.0/24" ]
 }
 
 resource "azurerm_subnet_route_table_association" "Trust" {
