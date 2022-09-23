@@ -39,3 +39,13 @@ variable "user_identifier" {
     type = string
     description = "value used to identify the user deploying, usually the beginning of your email address before the @xxx.com"
 }
+
+variable "cert_passphrase" {
+    type = string
+    description = "passphrase used to allow access to the pkcs12 file"
+}
+
+variable "cert_url" {
+    type = string
+    description = "Url to the cert pkcs12 file for loading into the panorama"
+}
