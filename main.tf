@@ -454,6 +454,8 @@ resource "local_file" "tf_ansible_vars_file_new" {
     admin_password: ${var.admin_password}
     certpassphrase: ${var.cert_passphrase}
     certurl: ${var.cert_url}
+    timezone: ${var.timezone}
+    customer: ${var.customername}
     DOC
   filename = "./tf_ansible_vars_file.yml"
 }

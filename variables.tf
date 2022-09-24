@@ -49,3 +49,9 @@ variable "cert_url" {
     type = string
     description = "Url to the cert pkcs12 file for loading into the panorama"
 }
+
+variable "timezone" {
+    type = string
+    description = "Timezone nomenclature for PaloAlto Panorama - US/Pacific - US-Mountain US/Central - US/Eastern"
+    default = "US/Pacific"
+}
