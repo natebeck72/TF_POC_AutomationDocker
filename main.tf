@@ -459,6 +459,9 @@ resource "local_file" "tf_ansible_vars_file_new" {
     serial_number: ${var.panorama_sn}
     DOC
   filename = "./tf_ansible_vars_file.yml"
+  depends_on = [
+    aws_route53_record.ngfw
+  ]
 }
 
 
@@ -467,7 +470,7 @@ resource "null_resource" "ansible-playbook" {
     command = "ansible-playbook /Ansible_poc_automation-docker/Config.yml --extra-vars '@tf_ansible_vars_file.yml'"
   }
   depends_on = [
-    azurerm_virtual_machine.NGFW
+    local_file.tf_ansible_vars_file_new
   ]
 }
 output "ngfw_public_ip" {
