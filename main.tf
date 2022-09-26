@@ -462,8 +462,10 @@ resource "local_file" "tf_ansible_vars_file_new" {
 }
 
 
-provider "local-exec" {
-  command = "ansible-playbook /Ansible_poc_automation-docker/Config.yml --extra-vars '@tf_ansible_vars_file.yml'"
+resource "null_resource" "ansible-playbook" {
+  provisioner "local-exec" {
+    command = "ansible-playbook /Ansible_poc_automation-docker/Config.yml --extra-vars '@tf_ansible_vars_file.yml'"
+  }
 }
 output "ngfw_public_ip" {
     value = data.azurerm_public_ip.firewallip.ip_address
