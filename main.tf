@@ -466,6 +466,9 @@ resource "null_resource" "ansible-playbook" {
   provisioner "local-exec" {
     command = "ansible-playbook /Ansible_poc_automation-docker/Config.yml --extra-vars '@tf_ansible_vars_file.yml'"
   }
+  depends_on = [
+    azurerm_virtual_machine.NGFW
+  ]
 }
 output "ngfw_public_ip" {
     value = data.azurerm_public_ip.firewallip.ip_address
