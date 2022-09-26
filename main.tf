@@ -283,7 +283,7 @@ resource "azurerm_network_interface" "fw-eth2" {
     name = "fw-eth2"
     resource_group_name = azurerm_resource_group.rgname.name
     location = azurerm_resource_group.rgname.location
-    enable_ip_forwarding = false 
+    enable_ip_forwarding = true 
     enable_accelerated_networking = true 
 
     ip_configuration {
