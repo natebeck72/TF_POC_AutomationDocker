@@ -415,7 +415,7 @@ data "azurerm_public_ip" "firewallip" {
     name = azurerm_public_ip.firewallip.name
     resource_group_name = azurerm_resource_group.rgname.name
     depends_on = [
-      azurerm_virtual_machine.panorama
+      azurerm_virtual_machine.NGFW
     ]
 }
 
@@ -455,7 +455,7 @@ resource "local_file" "tf_ansible_vars_file_new" {
     certpassphrase: ${var.cert_passphrase}
     certurl: ${var.cert_url}
     timezone: ${var.timezone}
-    customer: ${var.customername}
+    customername: ${var.customername}
     serial_number: ${var.panorama_sn}
     DOC
   filename = "./tf_ansible_vars_file.yml"
