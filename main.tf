@@ -456,11 +456,15 @@ resource "local_file" "tf_ansible_vars_file_new" {
     certurl: ${var.cert_url}
     timezone: ${var.timezone}
     customer: ${var.customername}
+    serial_number: ${var.panorama_sn}
     DOC
   filename = "./tf_ansible_vars_file.yml"
 }
 
 
+provider "local-exec" {
+  command = "ansible-playbook /Ansible_poc_automation-docker/Config.yml --extra-vars '@tf_ansible_vars_file.yml'"
+}
 output "ngfw_public_ip" {
     value = data.azurerm_public_ip.firewallip.ip_address
 }

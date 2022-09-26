@@ -55,3 +55,8 @@ variable "timezone" {
     description = "Timezone nomenclature for PaloAlto Panorama - US/Pacific - US-Mountain US/Central - US/Eastern"
     default = "US/Pacific"
 }
+
+variable "panorama_sn" {
+    type = string
+    description = "Panorama serial number, this is used to license the panorama as part of the best practice job"
+}
