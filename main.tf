@@ -232,6 +232,7 @@ resource "azurerm_subnet_route_table_association" "Untrust" {
   route_table_id = azurerm_route_table.external.id
 }
 
+
 resource "azurerm_subnet_network_security_group_association" "NSGTrust" {
   subnet_id = azurerm_subnet.Trust.id
   network_security_group_id = azurerm_network_security_group.nsg.id
@@ -301,8 +302,8 @@ resource "azurerm_network_interface" "panorama-mgmt" {
     name = "panorama-mgmt"
     resource_group_name = azurerm_resource_group.rgname.name
     location = azurerm_resource_group.rgname.location
-    enable_ip_forwarding = true 
-    enable_accelerated_networking = true
+    enable_ip_forwarding = false 
+    enable_accelerated_networking = false
 
     ip_configuration {
       name = "ipconfig_panorama"
@@ -313,6 +314,26 @@ resource "azurerm_network_interface" "panorama-mgmt" {
     tags = {
         function = "Panorama-MGMT"
     }
+}
+
+resource "azurerm_network_interface_security_group_association" "fw-eth0" {
+  network_interface_id = azurerm_network_interface.fw-eth0.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "fw-eth1" {
+  network_interface_id = azurerm_network_interface.fw-eth1.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "fw-eth2" {
+  network_interface_id = azurerm_network_interface.fw-eth2.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_network_interface_security_group_association" "panorama-mgmt" {
+  network_interface_id = azurerm_network_interface.panorama-mgmt.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 resource "azurerm_virtual_machine" "NGFW" {
