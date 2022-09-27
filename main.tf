@@ -301,6 +301,8 @@ resource "azurerm_network_interface" "panorama-mgmt" {
     name = "panorama-mgmt"
     resource_group_name = azurerm_resource_group.rgname.name
     location = azurerm_resource_group.rgname.location
+    enable_ip_forwarding = true 
+    enable_accelerated_networking = true
 
     ip_configuration {
       name = "ipconfig_panorama"
