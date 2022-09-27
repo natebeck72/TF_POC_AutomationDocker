@@ -232,6 +232,11 @@ resource "azurerm_subnet_route_table_association" "Untrust" {
   route_table_id = azurerm_route_table.external.id
 }
 
+resource "azurerm_subnet_network_security_group_association" "Mgmt" {
+  subnet_id = azurerm_subnet.Mgmt.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
 
 resource "azurerm_subnet_network_security_group_association" "NSGTrust" {
   subnet_id = azurerm_subnet.Trust.id
