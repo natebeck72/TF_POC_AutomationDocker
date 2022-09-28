@@ -264,6 +264,10 @@ resource "azurerm_network_interface" "fw-eth0" {
   tags = {
     function = "FW-MGMT"
   }
+  depends_on = [
+    azurerm_subnet.Mgmt,
+    azurerm_public_ip.firewallip
+  ]
 }
 
 resource "azurerm_network_interface" "fw-eth1" {
@@ -283,6 +287,10 @@ resource "azurerm_network_interface" "fw-eth1" {
   tags = {
     function = "FW-UNTRUST"
   }
+  depends_on = [
+    azurerm_subnet.Untrust,
+    azurerm_public_ip.panoramaip
+  ]
 }
 
 resource "azurerm_network_interface" "fw-eth2" {
@@ -301,6 +309,9 @@ resource "azurerm_network_interface" "fw-eth2" {
     tags = {
         function = "FW-Trust"
     }
+    depends_on = [
+      azurerm_subnet.Trust
+    ]
 }
 
 resource "azurerm_network_interface" "panorama-mgmt" {
@@ -319,26 +330,45 @@ resource "azurerm_network_interface" "panorama-mgmt" {
     tags = {
         function = "Panorama-MGMT"
     }
+    depends_on = [
+      azurerm_subnet.Trust
+    ]
 }
 
 resource "azurerm_network_interface_security_group_association" "fw-eth0" {
   network_interface_id = azurerm_network_interface.fw-eth0.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+  azurerm_network_interface.panorama-fw-eth0,
+  azurerm_network_security_group
+]
 }
 
 resource "azurerm_network_interface_security_group_association" "fw-eth1" {
   network_interface_id = azurerm_network_interface.fw-eth1.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+  azurerm_network_interface.fw-eth1,
+  azurerm_network_security_group
+  ]
 }
 
 resource "azurerm_network_interface_security_group_association" "fw-eth2" {
   network_interface_id = azurerm_network_interface.fw-eth2.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+  azurerm_network_interface.fw-eth2,
+  azurerm_network_security_group
+  ]
 }
 
 resource "azurerm_network_interface_security_group_association" "panorama-mgmt" {
   network_interface_id = azurerm_network_interface.panorama-mgmt.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+    azurerm_network_interface.panorama-mgmt,
+    azurerm_network_security_group
+  ]
 }
 
 resource "azurerm_virtual_machine" "NGFW" {
@@ -381,6 +411,11 @@ resource "azurerm_virtual_machine" "NGFW" {
         RunStatus = "NOSTOP"
         no-shut-contact = "${var.SE_Email}"
     }
+    depends_on = [
+      azurerm_network_interface.fw-eth0,
+      azurerm_network_interface.fw-eth1,
+      azurerm_network_interface.fw-eth2
+    ]
 }
 
 resource "azurerm_virtual_machine" "panorama" {
@@ -421,6 +456,9 @@ resource "azurerm_virtual_machine" "panorama" {
         RunStatus = "NOSTOP"
         no-shut-contact = "${var.SE_Email}"
     }
+    depends_on = [
+      azurerm_network_interface.panorama-mgmt
+    ]
 }
 
 # Read the Route53 Zone into the dataset
