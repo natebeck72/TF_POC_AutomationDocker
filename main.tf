@@ -317,7 +317,7 @@ resource "azurerm_network_interface" "fw-eth1" {
     function = "FW-UNTRUST"
   }
   depends_on = [
-    azurerm_subnet_network_security_group_association.NSGUntrust
+    azurerm_subnet_network_security_group_association.NSGUntrust,
     azurerm_public_ip.panormaip
   ]
 }
