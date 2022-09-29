@@ -289,7 +289,7 @@ resource "azurerm_network_interface" "fw-eth1" {
   }
   depends_on = [
     azurerm_subnet.Untrust,
-    azurerm_public_ip.panoramaip
+    azurerm_public_ip.panormaip
   ]
 }
 
@@ -339,8 +339,8 @@ resource "azurerm_network_interface_security_group_association" "fw-eth0" {
   network_interface_id = azurerm_network_interface.fw-eth0.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-  azurerm_network_interface.panorama-fw-eth0,
-  azurerm_network_security_group
+  azurerm_network_interface.fw-eth0,
+  azurerm_network_security_group.nsg
 ]
 }
 
@@ -349,7 +349,7 @@ resource "azurerm_network_interface_security_group_association" "fw-eth1" {
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
   azurerm_network_interface.fw-eth1,
-  azurerm_network_security_group
+  azurerm_network_security_group.nsg
   ]
 }
 
@@ -358,7 +358,7 @@ resource "azurerm_network_interface_security_group_association" "fw-eth2" {
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
   azurerm_network_interface.fw-eth2,
-  azurerm_network_security_group
+  azurerm_network_security_group.nsg
   ]
 }
 
@@ -367,7 +367,7 @@ resource "azurerm_network_interface_security_group_association" "panorama-mgmt" 
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
     azurerm_network_interface.panorama-mgmt,
-    azurerm_network_security_group
+    azurerm_network_security_group.nsg
   ]
 }
 
