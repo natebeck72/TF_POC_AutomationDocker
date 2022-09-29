@@ -207,6 +207,9 @@ resource "azurerm_subnet" "Mgmt" {
     resource_group_name = azurerm_resource_group.rgname.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = ["100.64.0.0/24"]
+    depends_on = [
+      azurerm_virtual_network.vnet
+    ]
 }
 
 resource "azurerm_subnet" "Untrust" {
@@ -214,38 +217,64 @@ resource "azurerm_subnet" "Untrust" {
   resource_group_name = azurerm_resource_group.rgname.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["100.64.1.0/24"]
+  depends_on = [
+    azurerm_virtual_network.vnet
+  ]
 }
 resource "azurerm_subnet" "Trust" {
     name = "Trust"
     resource_group_name = azurerm_resource_group.rgname.name
     virtual_network_name = azurerm_virtual_network.vnet.name
     address_prefixes = [ "100.64.2.0/24" ]
+    depends_on = [
+      azurerm_virtual_network.vnet
+    ]
 }
 
 resource "azurerm_subnet_route_table_association" "Trust" {
     subnet_id = azurerm_subnet.Trust.id
     route_table_id = azurerm_route_table.internal.id
+    depends_on = [
+      azurerm_subnet.Trust,
+      azurerm_route_table.internal
+    ]
 }
 
 resource "azurerm_subnet_route_table_association" "Untrust" {
   subnet_id = azurerm_subnet.Untrust.id
   route_table_id = azurerm_route_table.external.id
+  depends_on = [
+    azurerm_subnet.Untrust,
+    azurerm_route_table.external
+  ]
 }
 
 resource "azurerm_subnet_network_security_group_association" "Mgmt" {
   subnet_id = azurerm_subnet.Mgmt.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+    azurerm_subnet.Mgmt,
+    azurerm_network_security_group.nsg
+  ]
 }
 
 
 resource "azurerm_subnet_network_security_group_association" "NSGTrust" {
   subnet_id = azurerm_subnet.Trust.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+    azurerm_subnet.Trust,
+    azurerm_network_security_group.nsg
+  ]
 }
 
 resource "azurerm_subnet_network_security_group_association" "NSGUntrust" {
   subnet_id = azurerm_subnet.Untrust.id
   network_security_group_id = azurerm_network_security_group.nsg.id
+  depends_on = [
+    azurerm_subnet.Untrust,
+    azurerm_network_security_group.nsg
+  ]
 }
 
 resource "azurerm_network_interface" "fw-eth0" {
@@ -265,7 +294,7 @@ resource "azurerm_network_interface" "fw-eth0" {
     function = "FW-MGMT"
   }
   depends_on = [
-    azurerm_subnet.Mgmt,
+    azurerm_subnet_network_security_group_association.Mgmt,
     azurerm_public_ip.firewallip
   ]
 }
@@ -288,7 +317,7 @@ resource "azurerm_network_interface" "fw-eth1" {
     function = "FW-UNTRUST"
   }
   depends_on = [
-    azurerm_subnet.Untrust,
+    azurerm_subnet_network_security_group_association.NSGUntrust
     azurerm_public_ip.panormaip
   ]
 }
@@ -310,7 +339,7 @@ resource "azurerm_network_interface" "fw-eth2" {
         function = "FW-Trust"
     }
     depends_on = [
-      azurerm_subnet.Trust
+      azurerm_subnet_network_security_group_association.NSGTrust
     ]
 }
 
@@ -331,7 +360,7 @@ resource "azurerm_network_interface" "panorama-mgmt" {
         function = "Panorama-MGMT"
     }
     depends_on = [
-      azurerm_subnet.Trust
+      azurerm_subnet_network_security_group_association.NSGTrust
     ]
 }
 
@@ -339,8 +368,7 @@ resource "azurerm_network_interface_security_group_association" "fw-eth0" {
   network_interface_id = azurerm_network_interface.fw-eth0.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-  azurerm_network_interface.fw-eth0,
-  azurerm_network_security_group.nsg
+  azurerm_subnet_network_security_group_association.Mgmt
 ]
 }
 
@@ -348,8 +376,7 @@ resource "azurerm_network_interface_security_group_association" "fw-eth1" {
   network_interface_id = azurerm_network_interface.fw-eth1.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-  azurerm_network_interface.fw-eth1,
-  azurerm_network_security_group.nsg
+  azurerm_subnet_network_security_group_association.NSGUntrust
   ]
 }
 
@@ -357,8 +384,7 @@ resource "azurerm_network_interface_security_group_association" "fw-eth2" {
   network_interface_id = azurerm_network_interface.fw-eth2.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-  azurerm_network_interface.fw-eth2,
-  azurerm_network_security_group.nsg
+  azurerm_subnet_network_security_group_association.NSGTrust
   ]
 }
 
@@ -366,8 +392,7 @@ resource "azurerm_network_interface_security_group_association" "panorama-mgmt" 
   network_interface_id = azurerm_network_interface.panorama-mgmt.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-    azurerm_network_interface.panorama-mgmt,
-    azurerm_network_security_group.nsg
+    azurerm_network_interface_security_group_association.NSGTrust
   ]
 }
 
@@ -390,7 +415,7 @@ resource "azurerm_virtual_machine" "NGFW" {
     storage_os_disk {
       name = lower("${var.customername}-ngfw-osdisk")
       vhd_uri = "${azurerm_storage_account.poc.primary_blob_endpoint}vhds/${var.customername}-ngfw-osdisk1.vhd"
-      caching = "ReadWrite"
+      caching = "Readonly"
       create_option = "FromImage"
     }
     os_profile {
@@ -412,9 +437,9 @@ resource "azurerm_virtual_machine" "NGFW" {
         no-shut-contact = "${var.SE_Email}"
     }
     depends_on = [
-      azurerm_network_interface.fw-eth0,
-      azurerm_network_interface.fw-eth1,
-      azurerm_network_interface.fw-eth2
+      azurerm_network_interface_security_group_association.fw-eth0,
+      azurerm_network_interface_security_group_association.fw-eth1,
+      azurerm_network_interface_security_group_association.fw-eth2
     ]
 }
 
@@ -437,7 +462,7 @@ resource "azurerm_virtual_machine" "panorama" {
     storage_os_disk {
         name = lower("${var.customername}-panorama-osdisk")
         vhd_uri = "${azurerm_storage_account.poc.primary_blob_endpoint}vhds/${var.customername}-panorama-osdisk1.vhd"
-        caching = "ReadWrite"
+        caching = "Readonly"
         create_option = "FromImage"
     }
     os_profile {
