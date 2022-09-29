@@ -392,7 +392,7 @@ resource "azurerm_network_interface_security_group_association" "panorama-mgmt" 
   network_interface_id = azurerm_network_interface.panorama-mgmt.id
   network_security_group_id = azurerm_network_security_group.nsg.id
   depends_on = [
-    azurerm_network_interface_security_group_association.NSGTrust
+    azurerm_subnet_network_security_group_association.NSGTrust
   ]
 }
 
