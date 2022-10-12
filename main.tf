@@ -565,14 +565,14 @@ resource "null_resource" "ansible-playbook" {
   ]
 }
 
-resource "null_resource" "BestPractice" {
-  provisioner "local-exec" {
-    command = "ansible-playbook /Ansible_poc_automation-docker/BestPractice.yml --extra-vars '@tf_ansible_vars_file.yml'"
-  }
-  depends_on = [
-    null_resource.ansible-playbook
-  ]
-}
+#resource "null_resource" "BestPractice" {
+#  provisioner "local-exec" {
+#    command = "ansible-playbook /Ansible_poc_automation-docker/BestPractice.yml --extra-vars '@tf_ansible_vars_file.yml'"
+#  }
+#  depends_on = [
+#    null_resource.ansible-playbook
+#  ]
+#}
 
 output "ngfw_public_ip" {
     value = data.azurerm_public_ip.firewallip.ip_address
