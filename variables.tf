@@ -43,11 +43,13 @@ variable "user_identifier" {
 variable "cert_passphrase" {
     type = string
     description = "passphrase used to allow access to the pkcs12 file"
+    default = "passphrase"
 }
 
 variable "cert_url" {
     type = string
     description = "Url to the cert pkcs12 file for loading into the panorama"
+    default = "url"
 }
 
 variable "timezone" {

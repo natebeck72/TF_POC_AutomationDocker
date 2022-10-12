@@ -488,9 +488,9 @@ resource "azurerm_virtual_machine" "panorama" {
 
 # Read the Route53 Zone into the dataset
 
-data "aws_route53_zone" "prisma" {
-  zone_id = "Z04208933C23Y6NDNWXFB"
-}
+# data "aws_route53_zone" "prisma" {
+#  zone_id = "Z04208933C23Y6NDNWXFB"
+#}
 
 # Read the Public IP's
 
@@ -510,27 +510,27 @@ data "azurerm_public_ip" "firewallip" {
     ]
 }
 
-resource "aws_route53_record" "panorama" {
-  zone_id = data.aws_route53_zone.prisma.zone_id
-  name = lower("${var.customername}.prisma-poc.com")
-  type = "A"
-  ttl = "300"
-  records = [data.azurerm_public_ip.panoramaip.ip_address]
-  depends_on = [
-    azurerm_virtual_machine.NGFW
-  ]
-}
+#resource "aws_route53_record" "panorama" {
+#  zone_id = data.aws_route53_zone.prisma.zone_id
+#  name = lower("${var.customername}.prisma-poc.com")
+#  type = "A"
+#  ttl = "300"
+#  records = [data.azurerm_public_ip.panoramaip.ip_address]
+#  depends_on = [
+#    azurerm_virtual_machine.NGFW
+#  ]
+#}
 
-resource "aws_route53_record" "ngfw" {
-  zone_id = data.aws_route53_zone.prisma.zone_id
-  name = lower("${var.customername}-fw.prisma-poc.com")
-  type = "A"
-  ttl = "300"
-  records = [data.azurerm_public_ip.firewallip.ip_address]
-  depends_on = [
-    azurerm_virtual_machine.NGFW
-  ]
-}
+#resource "aws_route53_record" "ngfw" {
+#  zone_id = data.aws_route53_zone.prisma.zone_id
+#  name = lower("${var.customername}-fw.prisma-poc.com")
+#  type = "A"
+#  ttl = "300"
+#  records = [data.azurerm_public_ip.firewallip.ip_address]
+#  depends_on = [
+#    azurerm_virtual_machine.NGFW
+#  ]
+#}
 
 
 # Export Terraform Variable values to an Ansible vars.file
