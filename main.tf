@@ -551,7 +551,7 @@ resource "local_file" "tf_ansible_vars_file_new" {
     DOC
   filename = "./tf_ansible_vars_file.yml"
   depends_on = [
-    aws_route53_record.ngfw
+    data.azurerm_public_ip.firewallip
   ]
 }
 
