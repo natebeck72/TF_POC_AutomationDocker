@@ -552,7 +552,7 @@ resource "local_file" "tf_ansible_vars_file_new" {
   filename = "./tf_ansible_vars_file.yml"
   depends_on = [
     data.azurerm_public_ip.firewallip,
-    data.azurerm_public_ip.panormaip
+    data.azurerm_public_ip.panoramaip
   ]
 }
 
